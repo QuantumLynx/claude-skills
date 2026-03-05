@@ -1188,7 +1188,7 @@ For each modified file:
    - Fix specific debt categories
    - Expand scope to broader refactor
 
-## Additional Principles from coding_rules.md
+## Additional Principles from references/coding_rules.md
 
 ### Function Complexity
 - Keep functions under 50 LOC

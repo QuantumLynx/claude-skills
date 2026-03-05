@@ -2,7 +2,7 @@ import os
 import sys
 
 # Add scripts to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "skills", "travel-planner", "scripts"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "plugins", "travel-planner", "skills", "travel-planner", "scripts"))
 
 import travel_db
 

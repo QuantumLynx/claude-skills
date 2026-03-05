@@ -87,7 +87,7 @@ Scan conversation history (last 50 messages) for step-by-step plan and which ste
 - Target: 100% coverage on new leaf types
 
 **Implement Code**:
-- Follow coding principles from coding_rules.md
+- Follow coding principles from references/coding_rules.md
 - Keep functions <50 LOC, max 2 nesting levels
 - Use self-validating types, prevent primitive obsession
 </phase>
