@@ -147,6 +147,86 @@ def calculate_multi_tier_budget(num_days: int, num_travelers: int, destination_r
     return tiers
 
 
+def calculate_multi_region_budget(
+    segments: list[dict[str, Any]],
+    num_travelers: int,
+    destination_region: str = "europe",
+) -> dict[str, Any]:
+    """
+    Calculate budget for multi-region trips where accommodation costs vary per segment.
+
+    Each segment dict should have:
+        - region_name: str (display name)
+        - nights: int
+        - accommodation_multiplier: float (1.0 = standard, 1.5 = premium area, 0.8 = rural/budget area)
+
+    Returns per-tier totals with per-segment breakdown.
+    """
+    region = destination_region.lower().replace(" ", "_")
+
+    accommodation_baselines = {
+        "europe": {"budget": 250, "mid_range": 450, "premium": 900},
+        "asia": {"budget": 150, "mid_range": 300, "premium": 700},
+        "north_america": {"budget": 350, "mid_range": 600, "premium": 1200},
+        "south_america": {"budget": 180, "mid_range": 350, "premium": 750},
+        "middle_east": {"budget": 200, "mid_range": 400, "premium": 850},
+    }
+
+    food_baselines = {
+        "europe": {"budget": 100, "mid_range": 200, "premium": 400},
+        "asia": {"budget": 60, "mid_range": 130, "premium": 300},
+        "north_america": {"budget": 120, "mid_range": 220, "premium": 450},
+        "south_america": {"budget": 70, "mid_range": 150, "premium": 320},
+        "middle_east": {"budget": 80, "mid_range": 170, "premium": 350},
+    }
+
+    activities_baselines = {
+        "europe": {"budget": 50, "mid_range": 120, "premium": 250},
+        "asia": {"budget": 30, "mid_range": 80, "premium": 200},
+        "north_america": {"budget": 60, "mid_range": 140, "premium": 280},
+        "south_america": {"budget": 40, "mid_range": 100, "premium": 220},
+        "middle_east": {"budget": 40, "mid_range": 100, "premium": 200},
+    }
+
+    if region not in accommodation_baselines:
+        region = "europe"
+
+    total_nights = sum(s["nights"] for s in segments)
+    tiers = {}
+
+    for tier_name in ["budget", "mid_range", "premium"]:
+        segment_details = []
+        total_accommodation = 0
+
+        for seg in segments:
+            multiplier = seg.get("accommodation_multiplier", 1.0)
+            base_rate = accommodation_baselines[region][tier_name]
+            adjusted_rate = base_rate * multiplier
+            seg_cost = adjusted_rate * seg["nights"]
+            total_accommodation += seg_cost
+            segment_details.append({
+                "region": seg["region_name"],
+                "nights": seg["nights"],
+                "rate_per_night": round(adjusted_rate),
+                "subtotal": round(seg_cost),
+            })
+
+        food = food_baselines[region][tier_name] * total_nights * num_travelers
+        activities = activities_baselines[region][tier_name] * total_nights * num_travelers
+        total = total_accommodation + food + activities
+
+        tiers[tier_name] = {
+            "accommodation_segments": segment_details,
+            "accommodation_total": round(total_accommodation),
+            "food_total": round(food),
+            "activities_total": round(activities),
+            "total": round(total),
+            "per_person": round(total / num_travelers) if num_travelers > 0 else 0,
+        }
+
+    return tiers
+
+
 def format_route_comparison_table(routes: list[dict[str, Any]]) -> str:
     """
     Generate a markdown comparison table for alternative routes.
