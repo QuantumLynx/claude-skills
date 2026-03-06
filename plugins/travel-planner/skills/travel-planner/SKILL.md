@@ -20,6 +20,42 @@ Invoke this skill for travel-related tasks:
 - Pre-trip preparation timelines
 - Travel preference management
 
+## Input Modes
+
+The skill supports two input modes:
+
+### Mode A: Full Description (Default)
+User provides trip details inline with the skill invocation:
+```
+/travel-planner Italy, 2 weeks, 4 people, Dolomites + Tuscany + Rome
+```
+Proceed directly to Step 1 → Step 3 with available info.
+
+### Mode B: Interactive Questions
+When the user provides minimal or no trip details (e.g., just "plan a trip" or "help me plan vacation"), ask focused questions one at a time. Do NOT dump a wall of questions — ask the most important one first, then follow up based on answers.
+
+**Question sequence (ask one or two at a time, adapt based on answers):**
+1. "Where do you want to go?" (or "Any destinations in mind?")
+2. "When and for how long?"
+3. "How many travelers? Ages of children if any?"
+4. "What's your budget range — budget, mid-range, or flexible?"
+5. "What are your must-see/must-do priorities?"
+6. "Where are you flying from?"
+
+Stop asking once you have enough to build a plan. Don't ask about things you can research yourself (weather, cultural tips, visa requirements).
+
+## Output Language
+
+Generate the plan in the **same language the user writes in**. If the user writes in Russian, the entire plan (headings, descriptions, tips, cultural notes) should be in Russian. If Hebrew — in Hebrew. If English — in English.
+
+The user can also explicitly request a language: "plan in Russian", "make it in Hebrew", "translate to Russian".
+
+**Language-specific rules:**
+- Keep place names in their original form (e.g., "Cortina d'Ampezzo", not transliterated) but add transliteration in parentheses for non-Latin scripts on first mention
+- Keep airline names, hotel names, and website URLs in English/original
+- Currency amounts: keep the same format (NIS/EUR) regardless of language
+- Google Maps links work in any language — keep them as-is
+
 ## Workflow
 
 ### Step 1: Check for Existing Preferences
@@ -533,6 +569,9 @@ Comprehensive guide for destination research, budget planning, itinerary creatio
 
 ### references/cultural_etiquette.md
 Templates and guidelines for researching country-specific customs, dress codes, dining etiquette, religious considerations, and common mistakes to avoid.
+
+### scripts/export_to_sheets.py
+Exports a generated plan markdown file to a formatted Excel (.xlsx) file that can be uploaded to Google Sheets. Color-coded sections, hyperlinks preserved, alternating row colors. Usage: `python3 scripts/export_to_sheets.py [input.md] [output.xlsx]`
 
 ### references/report_template.md
 Full markdown template for the Smart Route Optimizer report format with route comparison, per-route sections, budget tiers, and booking tips.
